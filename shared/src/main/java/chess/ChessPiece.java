@@ -45,5 +45,6 @@ public class ChessPiece {
     }
 
     public enum PieceType {
+        BISHOP, ROOK, KNIGHT, QUEEN, KING, PAWN
     }
 }
