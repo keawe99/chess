@@ -15,6 +15,39 @@ public class ChessBoard {
 
     }
 
+//    Adding hashcode and equals
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessBoard)) return false;
+        ChessBoard other = (ChessBoard) o;
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece thisPiece = this.board[row][col];
+                ChessPiece otherPiece = other.board[row][col];
+
+                if (thisPiece == null && otherPiece != null) return false;
+                if (thisPiece != null && !thisPiece.equals(otherPiece)) return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = board[row][col];
+                result = 31 * result + (piece == null ? 0 : piece.hashCode());
+            }
+        }
+        return result;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
