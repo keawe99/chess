@@ -27,11 +27,8 @@ public class ChessGame {
         teamTurn = TeamColor.WHITE;
     }
 
-    public boolean isUnderAttack(ChessPosition chessPosition, TeamColor col, ChessBoard b) {
-        this.chessPosition = chessPosition;
-        this.col = col;
-        this.b = b;
-        return false;
+    public boolean isUnderAttack(ChessPosition pos, TeamColor color, ChessBoard board) {
+        return isPositionUnderAttack(pos, color, board);
     }
 
 
@@ -53,17 +50,32 @@ public class ChessGame {
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null || piece.getTeamColor() != teamTurn) return null;
 
-        // get pseudo-legal moves now with en passant and castling awareness
+        // ✅ Always return a non-null collection
+        if (piece == null) {
+            return Collections.emptyList();
+        }
+
+        // Note: The test `Valid Moves Independent of Team Turn` implies we should allow checking moves
+        // for any piece on the board, not just the current turn. So REMOVE the team check below:
+        //
+        // if (piece.getTeamColor() != teamTurn) {
+        //     return Collections.emptyList();
+        // }
+
+        // Get pseudo-legal moves (may include illegal moves like exposing king to check)
         Collection<ChessMove> pseudo = piece.pieceMoves(board, startPosition, this);
         List<ChessMove> legal = new ArrayList<>();
 
         for (ChessMove move : pseudo) {
+            // Clone board to simulate move
             ChessBoard simulated = cloneBoard(board);
             simulateMove(simulated, move);
 
+            // Find the king position after the move
             ChessPosition kingPos = findKingPosition(piece.getTeamColor(), simulated);
+
+            // Only allow move if it doesn't leave king in check
             if (kingPos != null && !isPositionUnderAttack(kingPos, piece.getTeamColor(), simulated)) {
                 legal.add(move);
             }
@@ -71,6 +83,7 @@ public class ChessGame {
 
         return legal;
     }
+
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
@@ -156,9 +169,24 @@ public class ChessGame {
         return isInCheck(teamColor) && getAllLegalMoves(teamColor).isEmpty();
     }
 
-    public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && getAllLegalMoves(teamColor).isEmpty();
+    public boolean isInStalemate(TeamColor team) {
+        if (isInCheck(team)) return false;
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getTeamColor() == team) {
+                    Collection<ChessMove> moves = validMoves(pos);
+                    if (!moves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
+
 
     // ---------------- Helper Functions ----------------
 

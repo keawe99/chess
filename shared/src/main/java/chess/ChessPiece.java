@@ -146,7 +146,7 @@ public class ChessPiece {
 
         int row = f.getRow();
 
-        // Kingside castling
+        // Kingside
         if (!game.hasKingsideRookMoved(col)
                 && b.getPiece(new ChessPosition(row, 6)) == null
                 && b.getPiece(new ChessPosition(row, 7)) == null
@@ -156,7 +156,7 @@ public class ChessPiece {
             m.add(new ChessMove(f, new ChessPosition(row, 7), null));
         }
 
-        // Queenside castling
+        // Queenside
         if (!game.hasQueensideRookMoved(col)
                 && b.getPiece(new ChessPosition(row, 4)) == null
                 && b.getPiece(new ChessPosition(row, 3)) == null
@@ -167,6 +167,7 @@ public class ChessPiece {
             m.add(new ChessMove(f, new ChessPosition(row, 3), null));
         }
     }
+
 
     private boolean inBounds(int rr, int cc) {
         return rr >= 1 && rr <= 8 && cc >= 1 && cc <= 8;
