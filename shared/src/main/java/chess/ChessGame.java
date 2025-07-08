@@ -14,6 +14,7 @@ public class ChessGame {
     private boolean blackKingsideRookMoved = false;
     private boolean blackQueensideRookMoved = false;
 
+
     // Tracking en passant
     private ChessPosition enPassantTarget = null;
 
@@ -26,6 +27,7 @@ public class ChessGame {
     public boolean isUnderAttack(ChessPosition chessPosition, TeamColor col, ChessBoard b) {
         return false;
     }
+
 
     public enum TeamColor { WHITE, BLACK }
 

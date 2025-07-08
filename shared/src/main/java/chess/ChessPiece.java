@@ -16,8 +16,7 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ChessPiece)) return false;
-        ChessPiece p = (ChessPiece)o;
+        if (!(o instanceof ChessPiece p)) return false;
         return p.pieceColor == pieceColor && p.type == type;
     }
 
@@ -93,6 +92,13 @@ public class ChessPiece {
         }
         return moves;
     }
+    // Compatibility overload for tests or other code expecting two arguments
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition from) {
+        // Provide a dummy ChessGame to satisfy the 3-argument method
+        ChessGame dummyGame = new ChessGame();
+        return pieceMoves(board, from, dummyGame);
+    }
+
 
     private void addSliding(ChessBoard b, ChessPosition f, List<ChessMove> m, int[][] dirs) {
         for (int[] d : dirs) {
