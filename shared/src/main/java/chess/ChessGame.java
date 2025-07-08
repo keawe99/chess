@@ -23,6 +23,10 @@ public class ChessGame {
         teamTurn = TeamColor.WHITE;
     }
 
+    public boolean isUnderAttack(ChessPosition chessPosition, TeamColor col, ChessBoard b) {
+        return false;
+    }
+
     public enum TeamColor { WHITE, BLACK }
 
     public TeamColor getTeamTurn() { return teamTurn; }

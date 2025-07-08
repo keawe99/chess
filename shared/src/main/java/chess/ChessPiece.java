@@ -129,7 +129,7 @@ public class ChessPiece {
     }
 
     private void addCastling(ChessBoard b, ChessPosition f, List<ChessMove> m, ChessGame game) {
-        TeamColor col = pieceColor;
+        ChessGame.TeamColor col = pieceColor;
         if (game.hasKingMoved(col)) return;
         int row = f.getRow();
 
