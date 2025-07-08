@@ -17,6 +17,9 @@ public class ChessGame {
 
     // Tracking en passant
     private ChessPosition enPassantTarget = null;
+    private ChessPosition chessPosition;
+    private TeamColor col;
+    private ChessBoard b;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -25,6 +28,9 @@ public class ChessGame {
     }
 
     public boolean isUnderAttack(ChessPosition chessPosition, TeamColor col, ChessBoard b) {
+        this.chessPosition = chessPosition;
+        this.col = col;
+        this.b = b;
         return false;
     }
 

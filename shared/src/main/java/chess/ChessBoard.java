@@ -20,8 +20,7 @@ public class ChessBoard {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ChessBoard)) return false;
-        ChessBoard other = (ChessBoard) o;
+        if (!(o instanceof ChessBoard other)) return false;
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
