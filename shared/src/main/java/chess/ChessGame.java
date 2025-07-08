@@ -14,7 +14,6 @@ public class ChessGame {
     private boolean blackKingsideRookMoved = false;
     private boolean blackQueensideRookMoved = false;
 
-
     // Tracking en passant
     private ChessPosition enPassantTarget = null;
     private ChessPosition chessPosition;
@@ -30,7 +29,6 @@ public class ChessGame {
     public boolean isUnderAttack(ChessPosition pos, TeamColor color, ChessBoard board) {
         return isPositionUnderAttack(pos, color, board);
     }
-
 
     public enum TeamColor { WHITE, BLACK }
 
@@ -83,7 +81,6 @@ public class ChessGame {
 
         return legal;
     }
-
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
@@ -187,7 +184,6 @@ public class ChessGame {
         return true;
     }
 
-
     // ---------------- Helper Functions ----------------
 
     private ChessBoard cloneBoard(ChessBoard orig) {
@@ -259,8 +255,6 @@ public class ChessGame {
         return false;
     }
 
-
-
     private List<ChessMove> getAllLegalMoves(TeamColor teamColor) {
         List<ChessMove> all = new ArrayList<>();
         for (int r = 1; r <= 8; r++)
@@ -287,5 +281,38 @@ public class ChessGame {
     }
     ChessPosition getEnPassantTarget() {
         return enPassantTarget;
+    }
+
+    // ---------------- equals() and hashCode() ----------------
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessGame other)) return false;
+
+        return Objects.equals(this.board, other.board) &&
+                this.teamTurn == other.teamTurn &&
+                this.whiteKingMoved == other.whiteKingMoved &&
+                this.whiteKingsideRookMoved == other.whiteKingsideRookMoved &&
+                this.whiteQueensideRookMoved == other.whiteQueensideRookMoved &&
+                this.blackKingMoved == other.blackKingMoved &&
+                this.blackKingsideRookMoved == other.blackKingsideRookMoved &&
+                this.blackQueensideRookMoved == other.blackQueensideRookMoved &&
+                Objects.equals(this.enPassantTarget, other.enPassantTarget);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                board,
+                teamTurn,
+                whiteKingMoved,
+                whiteKingsideRookMoved,
+                whiteQueensideRookMoved,
+                blackKingMoved,
+                blackKingsideRookMoved,
+                blackQueensideRookMoved,
+                enPassantTarget
+        );
     }
 }
