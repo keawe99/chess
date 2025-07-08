@@ -212,21 +212,25 @@ public class ChessGame {
         TeamColor attacker = (defender == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
 
         ChessGame dummyGame = new ChessGame();
-        dummyGame.setBoard(brd); // crucial!
+        dummyGame.setBoard(brd);  // mimic game state
 
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
                 ChessPosition check = new ChessPosition(r, c);
                 ChessPiece pc = brd.getPiece(check);
                 if (pc != null && pc.getTeamColor() == attacker) {
-                    for (ChessMove m : pc.pieceMoves(brd, check, dummyGame)) {
-                        if (m.getEndPosition().equals(pos)) return true;
+                    // ⚠️ Skip castling when checking for attack!
+                    for (ChessMove m : pc.pieceMoves(brd, check, dummyGame, false)) {
+                        if (m.getEndPosition().equals(pos)) {
+                            return true;
+                        }
                     }
                 }
             }
         }
         return false;
     }
+
 
 
     private List<ChessMove> getAllLegalMoves(TeamColor teamColor) {

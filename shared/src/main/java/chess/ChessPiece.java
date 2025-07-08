@@ -32,8 +32,11 @@ public class ChessPiece {
 
     public enum PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN }
 
-    public Collection<ChessMove> pieceMoves(
-            ChessBoard board, ChessPosition from, ChessGame game) {
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition from, ChessGame game) {
+        return pieceMoves(board, from, game, true); // default to including castling
+    }
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition from, ChessGame game, boolean includeCastling) {
         List<ChessMove> moves = new ArrayList<>();
         int r = from.getRow(), c = from.getColumn();
 
@@ -46,8 +49,9 @@ public class ChessPiece {
                         if (inBounds(rr,cc))
                             addIfValid(board, from, new ChessPosition(rr,cc), moves);
                     }
-                // Castling
-                addCastling(board, from, moves, game);
+                if (includeCastling) {
+                    addCastling(board, from, moves, game);
+                }
             }
             case QUEEN -> addSliding(board, from, moves,
                     new int[][]{{1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}});
@@ -92,13 +96,11 @@ public class ChessPiece {
         }
         return moves;
     }
-    // Compatibility overload for tests or other code expecting two arguments
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition from) {
-        // Provide a dummy ChessGame to satisfy the 3-argument method
-        ChessGame dummyGame = new ChessGame();
-        return pieceMoves(board, from, dummyGame);
-    }
 
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition from) {
+        ChessGame dummyGame = new ChessGame();
+        return pieceMoves(board, from, dummyGame, true);
+    }
 
     private void addSliding(ChessBoard b, ChessPosition f, List<ChessMove> m, int[][] dirs) {
         for (int[] d : dirs) {
@@ -122,8 +124,6 @@ public class ChessPiece {
         ChessPiece tgt = b.getPiece(t);
         if (tgt == null || tgt.getTeamColor() != pieceColor)
             m.add(new ChessMove(f,t,null));
-        System.out.printf("Adding move from %s to %s%n", f, t);
-
     }
 
     private void addPawnMove(ChessPosition f, int rr, int cc, int endR, List<ChessMove> m) {
@@ -139,38 +139,34 @@ public class ChessPiece {
     private void addCastling(ChessBoard b, ChessPosition f, List<ChessMove> m, ChessGame game) {
         ChessGame.TeamColor col = pieceColor;
 
-        // Ensure the king is on the starting square
         if ((col == ChessGame.TeamColor.WHITE && !f.equals(new ChessPosition(1, 5))) ||
-                (col == ChessGame.TeamColor.BLACK && !f.equals(new ChessPosition(8, 5)))) {
-            return;
-        }
+                (col == ChessGame.TeamColor.BLACK && !f.equals(new ChessPosition(8, 5)))) return;
 
         if (game.hasKingMoved(col) || game.isInCheck(col)) return;
 
         int row = f.getRow();
 
-        // Kingside castling: e1 -> g1 or e8 -> g8
+        // Kingside castling
         if (!game.hasKingsideRookMoved(col)
                 && b.getPiece(new ChessPosition(row, 6)) == null
                 && b.getPiece(new ChessPosition(row, 7)) == null
-                && !game.isUnderAttack(new ChessPosition(row, 5), col, b) // current square
+                && !game.isUnderAttack(new ChessPosition(row, 5), col, b)
                 && !game.isUnderAttack(new ChessPosition(row, 6), col, b)
                 && !game.isUnderAttack(new ChessPosition(row, 7), col, b)) {
             m.add(new ChessMove(f, new ChessPosition(row, 7), null));
         }
 
-        // Queenside castling: e1 -> c1 or e8 -> c8
+        // Queenside castling
         if (!game.hasQueensideRookMoved(col)
                 && b.getPiece(new ChessPosition(row, 4)) == null
                 && b.getPiece(new ChessPosition(row, 3)) == null
                 && b.getPiece(new ChessPosition(row, 2)) == null
-                && !game.isUnderAttack(new ChessPosition(row, 5), col, b) // current square
+                && !game.isUnderAttack(new ChessPosition(row, 5), col, b)
                 && !game.isUnderAttack(new ChessPosition(row, 4), col, b)
                 && !game.isUnderAttack(new ChessPosition(row, 3), col, b)) {
             m.add(new ChessMove(f, new ChessPosition(row, 3), null));
         }
     }
-
 
     private boolean inBounds(int rr, int cc) {
         return rr >= 1 && rr <= 8 && cc >= 1 && cc <= 8;
