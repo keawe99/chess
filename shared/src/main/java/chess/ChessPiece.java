@@ -122,6 +122,8 @@ public class ChessPiece {
         ChessPiece tgt = b.getPiece(t);
         if (tgt == null || tgt.getTeamColor() != pieceColor)
             m.add(new ChessMove(f,t,null));
+        System.out.printf("Adding move from %s to %s%n", f, t);
+
     }
 
     private void addPawnMove(ChessPosition f, int rr, int cc, int endR, List<ChessMove> m) {
@@ -136,30 +138,39 @@ public class ChessPiece {
 
     private void addCastling(ChessBoard b, ChessPosition f, List<ChessMove> m, ChessGame game) {
         ChessGame.TeamColor col = pieceColor;
-        if (game.hasKingMoved(col)) return;
+
+        // Ensure the king is on the starting square
+        if ((col == ChessGame.TeamColor.WHITE && !f.equals(new ChessPosition(1, 5))) ||
+                (col == ChessGame.TeamColor.BLACK && !f.equals(new ChessPosition(8, 5)))) {
+            return;
+        }
+
+        if (game.hasKingMoved(col) || game.isInCheck(col)) return;
+
         int row = f.getRow();
 
-        // Kingside
+        // Kingside castling: e1 -> g1 or e8 -> g8
         if (!game.hasKingsideRookMoved(col)
-                && b.getPiece(new ChessPosition(row,6)) == null
-                && b.getPiece(new ChessPosition(row,7)) == null
-                && !game.isInCheck(col)
-                && !game.isUnderAttack(new ChessPosition(row,6), col, b)
-                && !game.isUnderAttack(new ChessPosition(row,7), col, b)) {
-            m.add(new ChessMove(f, new ChessPosition(row,7), null));
+                && b.getPiece(new ChessPosition(row, 6)) == null
+                && b.getPiece(new ChessPosition(row, 7)) == null
+                && !game.isUnderAttack(new ChessPosition(row, 5), col, b) // current square
+                && !game.isUnderAttack(new ChessPosition(row, 6), col, b)
+                && !game.isUnderAttack(new ChessPosition(row, 7), col, b)) {
+            m.add(new ChessMove(f, new ChessPosition(row, 7), null));
         }
 
-        // Queenside
+        // Queenside castling: e1 -> c1 or e8 -> c8
         if (!game.hasQueensideRookMoved(col)
-                && b.getPiece(new ChessPosition(row,2)) == null
-                && b.getPiece(new ChessPosition(row,3)) == null
-                && b.getPiece(new ChessPosition(row,4)) == null
-                && !game.isInCheck(col)
-                && !game.isUnderAttack(new ChessPosition(row,4), col, b)
-                && !game.isUnderAttack(new ChessPosition(row,3), col, b)) {
-            m.add(new ChessMove(f, new ChessPosition(row,3), null));
+                && b.getPiece(new ChessPosition(row, 4)) == null
+                && b.getPiece(new ChessPosition(row, 3)) == null
+                && b.getPiece(new ChessPosition(row, 2)) == null
+                && !game.isUnderAttack(new ChessPosition(row, 5), col, b) // current square
+                && !game.isUnderAttack(new ChessPosition(row, 4), col, b)
+                && !game.isUnderAttack(new ChessPosition(row, 3), col, b)) {
+            m.add(new ChessMove(f, new ChessPosition(row, 3), null));
         }
     }
+
 
     private boolean inBounds(int rr, int cc) {
         return rr >= 1 && rr <= 8 && cc >= 1 && cc <= 8;
