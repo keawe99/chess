@@ -204,18 +204,24 @@ public class ChessGame {
 
     private boolean isPositionUnderAttack(ChessPosition pos, TeamColor defender, ChessBoard brd) {
         TeamColor attacker = (defender == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
-        for (int r = 1; r <= 8; r++)
+
+        ChessGame dummyGame = new ChessGame();
+        dummyGame.setBoard(brd); // crucial!
+
+        for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
                 ChessPosition check = new ChessPosition(r, c);
                 ChessPiece pc = brd.getPiece(check);
                 if (pc != null && pc.getTeamColor() == attacker) {
-                    for (ChessMove m : pc.pieceMoves(brd, check, this)) {
+                    for (ChessMove m : pc.pieceMoves(brd, check, dummyGame)) {
                         if (m.getEndPosition().equals(pos)) return true;
                     }
                 }
             }
+        }
         return false;
     }
+
 
     private List<ChessMove> getAllLegalMoves(TeamColor teamColor) {
         List<ChessMove> all = new ArrayList<>();
