@@ -5,6 +5,7 @@ import dataaccess.GameDAO;
 import dataaccess.MemoryDataAccess;
 import dataaccess.UserDAO;
 import server.handler.CreateGameHandler;
+import server.handler.JoinGameHandler;
 import server.handler.ListGamesHandler;
 import server.handler.LogoutHandler;
 import service.GameService;
@@ -32,6 +33,10 @@ public class Server {
 
 
         Spark.post("/user", new RegisterHandler(userService));
+        Spark.put("/game", new JoinGameHandler(gameService));
+        Spark.get("/game", new ListGamesHandler(gameService));
+
+
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
