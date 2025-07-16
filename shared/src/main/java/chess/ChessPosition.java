@@ -39,11 +39,13 @@ public class ChessPosition {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(row, column);
     }
 
     @Override
     public String toString() {
+
         return "(" + row + ", " + column + ")";
     }
 }

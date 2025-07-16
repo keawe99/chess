@@ -30,13 +30,21 @@ public class ChessGame {
         return isPositionUnderAttack(pos, color, board);
     }
 
-    public enum TeamColor { WHITE, BLACK }
+    public enum TeamColor {
+        WHITE, BLACK
+    }
 
-    public TeamColor getTeamTurn() { return teamTurn; }
+    public TeamColor getTeamTurn() {
+        return teamTurn;
+    }
 
-    public void setTeamTurn(TeamColor team) { this.teamTurn = team; }
+    public void setTeamTurn(TeamColor team) {
+        this.teamTurn = team;
+    }
 
-    public ChessBoard getBoard() { return board; }
+    public ChessBoard getBoard() {
+        return board;
+    }
 
     public void setBoard(ChessBoard board) {
         this.board = board;

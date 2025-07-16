@@ -6,7 +6,7 @@ import spark.Response;
 import dataaccess.DataAccessException;
 
 public class ErrorHandler {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     public static String handleDataAccessException(DataAccessException e, Response res) {
         if (e.getMessage().toLowerCase().contains("unauthorized")) {
@@ -14,6 +14,6 @@ public class ErrorHandler {
         } else {
             res.status(500);
         }
-        return gson.toJson(new ErrorResponse(e.getMessage()));
+        return GSON.toJson(new ErrorResponse(e.getMessage()));
     }
 }
