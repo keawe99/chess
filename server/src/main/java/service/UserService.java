@@ -5,6 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
+import model.LoginRequest;
+import model.LoginResult;
 import model.UserData;
 
 import java.util.UUID;
@@ -31,5 +33,25 @@ public class UserService {
         authDAO.insertAuth(auth);
 
         return auth;
+    }
+
+
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        // Validate request
+        if (request.username() == null || request.password() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+
+        var user = userDAO.getUser(request.username());
+
+        if (user == null || !user.password().equals(request.password())) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        String token = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(token, user.username());
+        authDAO.createAuth(new AuthData(token, user.username()));
+
+        return new LoginResult(user.username(), token);
     }
 }

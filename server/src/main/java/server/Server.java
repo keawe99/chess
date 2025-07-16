@@ -22,6 +22,9 @@ public class Server {
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
+        Spark.post("/session", new server.handler.LoginHandler(userService));
+
+
         Spark.delete("/db", new ClearHandler());
 
         Spark.awaitInitialization();

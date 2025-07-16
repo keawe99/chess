@@ -1,4 +1,3 @@
-// UserDAO.java
 package dataaccess;
 
 import model.UserData;
@@ -6,6 +5,11 @@ import java.util.HashMap;
 
 public class UserDAO {
     private final HashMap<String, UserData> users = new HashMap<>();
+
+    // ✅ Explicit no-argument constructor
+    public UserDAO() {
+        // No special setup needed
+    }
 
     public void insertUser(UserData user) throws DataAccessException {
         if (users.containsKey(user.username())) {
