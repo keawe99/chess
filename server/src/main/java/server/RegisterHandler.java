@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import model.UserData;
 import model.AuthData;
 import service.UserService;
-import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import spark.Request;
@@ -14,9 +13,11 @@ import spark.Route;
 public class RegisterHandler implements Route {
 
     private final UserService userService;
+    private final AuthDAO authDAO;
 
-    public RegisterHandler(UserService userService) {
+    public RegisterHandler(UserService userService, AuthDAO authDAO) {
         this.userService = userService;
+        this.authDAO = authDAO;
     }
 
     @Override
@@ -24,6 +25,9 @@ public class RegisterHandler implements Route {
         try {
             UserData user = new Gson().fromJson(req.body(), UserData.class);
             AuthData auth = userService.register(user);
+
+            // 💥 Store auth token
+            authDAO.insertAuth(auth);
 
             res.status(200);
             return new Gson().toJson(auth);

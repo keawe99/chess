@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.MemoryDataAccess;
+import dataaccess.*;
 
 import model.AuthData;
 import model.GameData;
@@ -15,22 +12,25 @@ import java.util.Collection;
 
 
 public class GameService {
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
 
-    private final DataAccess dataAccess;
-
-    public GameService(GameDAO gameDAO) {
-        this.dataAccess = MemoryDataAccess.getInstance(); // Adjust if you're injecting or using another DAO
+    public GameService(GameDAO gameDAO, AuthDAO authDAO) {
+        this.gameDAO = gameDAO;
+        this.authDAO = authDAO;
     }
+
 
     /**
      * Lists all games for the authenticated user.
      */
     public Collection<GameData> listGames(String authToken) throws DataAccessException {
-        AuthData auth = dataAccess.getAuth(authToken);
+        AuthData auth = authDAO.getAuth(authToken);
+
         if (auth == null) {
             throw new DataAccessException("Error: unauthorized", 401);
         }
-        return dataAccess.listGames();
+        return gameDAO.listGames();
     }
 
     /**
@@ -41,12 +41,12 @@ public class GameService {
             throw new DataAccessException("Error: bad request", 400);
         }
 
-        AuthData auth = dataAccess.getAuth(authToken);
+        AuthData auth = authDAO.getAuth(authToken);
         if (auth == null) {
             throw new DataAccessException("Error: unauthorized", 401);
         }
 
-        int newGameID = dataAccess.createGame(request.gameName());
+        int newGameID = gameDAO.createGame(request.gameName()).gameID();
         return new CreateGameResponse(newGameID);
     }
 
@@ -58,12 +58,12 @@ public class GameService {
             throw new DataAccessException("Error: bad request", 400);
         }
 
-        AuthData auth = dataAccess.getAuth(authToken);
+        AuthData auth = authDAO.getAuth(authToken);
         if (auth == null) {
             throw new DataAccessException("Error: unauthorized", 401);
         }
 
-        GameData game = dataAccess.getGame(request.gameID());
+        GameData game = gameDAO.getGame(request.gameID());
         if (game == null) {
             throw new DataAccessException("Error: bad request", 400);
         }
@@ -86,6 +86,6 @@ public class GameService {
             default -> throw new DataAccessException("Error: bad request", 400);
         }
 
-        dataAccess.updateGame(game);
+        gameDAO.updateGame(game);
     }
 }

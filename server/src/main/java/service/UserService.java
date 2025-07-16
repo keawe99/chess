@@ -23,7 +23,7 @@ public class UserService {
 
     public AuthData register(UserData user) throws DataAccessException {
         if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new DataAccessException("Error: bad request", 409);
+            throw new DataAccessException("Error: bad request", 400);
         }
 
         userDAO.insertUser(user);
@@ -50,9 +50,9 @@ public class UserService {
 
         String token = UUID.randomUUID().toString();
         AuthData authData = new AuthData(token, user.username());
-        authDAO.createAuth(new AuthData(token, user.username()));
-
+        authDAO.insertAuth(authData); // ✅ INSERT IT!
         return new LoginResult(user.username(), token);
+
     }
 
     public void logout(String authToken) throws DataAccessException {

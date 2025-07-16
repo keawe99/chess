@@ -1,6 +1,7 @@
 package server.handler;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.*;
 import service.*;
@@ -11,10 +12,11 @@ import spark.Route;
 
 public class LoginHandler implements Route {
     private final UserService userService;
+    private final AuthDAO authDAO;  // Add this
 
-    // Correct constructor: assigns the passed-in userService
-    public LoginHandler(UserService userService) {
+    public LoginHandler(UserService userService, AuthDAO authDAO) {
         this.userService = userService;
+        this.authDAO = authDAO; // Save it
     }
 
     @Override
@@ -24,6 +26,10 @@ public class LoginHandler implements Route {
 
         try {
             LoginResult result = userService.login(request);
+
+            // 💥 Store auth token in DAO
+            authDAO.insertAuth(new AuthData(result.authToken(), result.username()));
+
             res.status(200);
             return gson.toJson(result);
         } catch (DataAccessException e) {
