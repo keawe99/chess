@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.*;
+import dataaccess.DataAccessException;
 import service.ClearService;
 import spark.Request;
 import spark.Response;
@@ -11,28 +11,19 @@ import java.util.HashMap;
 
 public class ClearHandler implements Route {
 
+    private final ClearService clearService;
     private final Gson gson = new Gson();
-    private final MemoryDataAccess authDAO = MemoryDataAccess.getInstance(); // or use actual AuthDAO if preferred
 
     public ClearHandler(ClearService clearService) {
+        this.clearService = clearService;
     }
 
     @Override
     public Object handle(Request request, Response response) {
         try {
-            // Check Authorization
-            String authToken = request.headers("Authorization");
-            if (authToken == null || authToken.isBlank() || authDAO.read(authToken) == null) {
-                response.status(401);
-                return gson.toJson(new ErrorMessage("Error: unauthorized"));
-            }
-
-            ClearService service = new ClearService(MemoryDataAccess.getInstance());
-            service.clear();
-
+            clearService.clear();
             response.status(200);
-            return gson.toJson(new HashMap<>()); // empty JSON on success
-
+            return gson.toJson(new HashMap<>()); // empty JSON object on success
         } catch (DataAccessException e) {
             response.status(500);
             return gson.toJson(new ErrorMessage("Error: " + e.getMessage()));

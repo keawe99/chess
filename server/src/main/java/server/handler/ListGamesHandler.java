@@ -3,6 +3,7 @@ package server.handler;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import model.ErrorResponse;
 import model.GameData;
 import service.GameService;
 import spark.Request;
@@ -14,19 +15,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ListGamesHandler implements Route {
-
     private final GameService gameService;
+    private final AuthDAO authDAO;
+    private final Gson gson = new Gson();
 
     public ListGamesHandler(GameService gameService, AuthDAO authDAO) {
         this.gameService = gameService;
+        this.authDAO = authDAO;
     }
 
     @Override
     public Object handle(Request req, Response res) throws Exception {
-        Gson gson = new Gson();
-
         try {
-            String authToken = req.headers("authorization");
+            String authToken = req.headers("Authorization");
+
             Collection<GameData> games = gameService.listGames(authToken);
 
             Map<String, Object> result = new HashMap<>();
@@ -41,7 +43,8 @@ public class ListGamesHandler implements Route {
             } else {
                 res.status(500);
             }
-            return gson.toJson(Map.of("message", e.getMessage()));
+            return gson.toJson(new ErrorResponse(e.getMessage()));
         }
     }
 }
+

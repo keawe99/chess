@@ -21,34 +21,26 @@ public class CreateGameHandler implements Route {
         this.authDAO = authDAO;
     }
 
-    @Override
     public Object handle(Request req, Response res) {
         try {
-            // Step 1: Validate auth token
             String authToken = req.headers("Authorization");
-            if (authToken == null || authToken.isBlank() || authDAO.read(authToken) == null) {
-                res.status(401);
-                return gson.toJson(new ErrorResponse("Error: unauthorized"));
-            }
 
-            // Step 2: Parse and validate request body
             CreateGameRequest request = gson.fromJson(req.body(), CreateGameRequest.class);
-            if (request == null || request.gameName() == null || request.gameName().isBlank()) {
-                res.status(400);
-                return gson.toJson(new ErrorResponse("Error: bad request"));
-            }
 
-            // Step 3: Call service to create game
             CreateGameResponse result = gameService.createGame(request, authToken);
             res.status(200);
             return gson.toJson(result);
 
         } catch (DataAccessException e) {
-            res.status(400); // Bad input or auth error from service layer
-            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
-        } catch (Exception e) {
-            res.status(500); // Server-side error
-            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+            if (e.getMessage().contains("unauthorized")) {
+                res.status(401);
+            } else if (e.getMessage().contains("bad request")) {
+                res.status(400);
+            } else {
+                res.status(500);
+            }
+            return gson.toJson(new ErrorResponse(e.getMessage()));
         }
     }
+
 }

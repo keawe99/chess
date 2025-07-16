@@ -32,12 +32,12 @@ public class Server {
         // Services that depend on DAOs
         UserService userService = new UserService(userDAO, authDAO);
         GameService gameService = new GameService(gameDAO, authDAO);
-        ClearService clearService = new ClearService(memoryDataAccess);
+        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
 
         // Register routes and handlers (pass required dependencies)
         Spark.post("/user", new RegisterHandler(userService, authDAO));
         Spark.post("/session", new LoginHandler(userService, authDAO));
-        Spark.delete("/session", new LogoutHandler(userService, authDAO));
+        Spark.delete("/session", new LogoutHandler(userService));
 
         Spark.post("/game", new CreateGameHandler(gameService, authDAO));
         Spark.put("/game", new JoinGameHandler(gameService, authDAO));

@@ -11,15 +11,15 @@ import model.ErrorResponse;
 
 public class LogoutHandler implements Route {
     private final UserService userService;
+    private final Gson gson = new Gson();
 
-    public LogoutHandler(UserService userService, AuthDAO authDAO) {
+    public LogoutHandler(UserService userService) {
         this.userService = userService;
     }
 
     @Override
     public Object handle(Request req, Response res) throws Exception {
         String authToken = req.headers("Authorization");
-        Gson gson = new Gson();
 
         try {
             userService.logout(authToken);
@@ -35,3 +35,4 @@ public class LogoutHandler implements Route {
         }
     }
 }
+
