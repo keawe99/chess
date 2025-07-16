@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameDAO {
+    private final MemoryDataAccess dataAccess = MemoryDataAccess.getInstance();
     private final Map<Integer, GameData> games = new HashMap<>();
     private int nextGameId = 1;
 
