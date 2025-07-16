@@ -5,7 +5,7 @@ import model.*;
 
 import java.util.*;
 
-public class MemoryDataAccess implements DataAccessInterface {
+public class MemoryDataAccess implements DataAccess {
     private static MemoryDataAccess instance;
 
     private final Map<String, UserData> users = new HashMap<>();

@@ -1,7 +1,7 @@
 package service;
 
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import dataaccess.DataAccessInterface;
 import dataaccess.GameDAO;
 import dataaccess.MemoryDataAccess;
 
@@ -16,7 +16,7 @@ import java.util.Collection;
 
 public class GameService {
 
-    private final DataAccessInterface dataAccess;
+    private final DataAccess dataAccess;
 
     public GameService(GameDAO gameDAO) {
         this.dataAccess = MemoryDataAccess.getInstance(); // Adjust if you're injecting or using another DAO
