@@ -14,7 +14,10 @@ public class Server {
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
+        Spark.delete("/db", new ClearHandler());
+
         Spark.awaitInitialization();
+
         return Spark.port();
     }
 
