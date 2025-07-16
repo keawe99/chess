@@ -23,7 +23,7 @@ public class Server {
 
         // In Server.java
         GameDAO gameDAO = new GameDAO(); // implement this if not done yet
-        GameService gameService = new GameService(authDAO, gameDAO);
+        GameService gameService = new GameService(gameDAO);
         Spark.get("/game", new ListGamesHandler(gameService));
 
 

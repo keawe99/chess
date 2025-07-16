@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import service.ClearService;
@@ -16,7 +17,8 @@ public class ClearHandler implements Route {
 
     @Override
     public Object handle(Request request, Response response) {
-        ClearService service = new ClearService(new MemoryDataAccess());
+        ClearService service = new ClearService((DataAccess) MemoryDataAccess.getInstance());
+
 
         try {
             service.clear();

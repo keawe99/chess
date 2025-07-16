@@ -13,7 +13,7 @@ public class UserDAO {
 
     public void insertUser(UserData user) throws DataAccessException {
         if (users.containsKey(user.username())) {
-            throw new DataAccessException("Error: already taken");
+            throw new DataAccessException("Error: already taken", 409);
         }
         users.put(user.username(), user);
     }
