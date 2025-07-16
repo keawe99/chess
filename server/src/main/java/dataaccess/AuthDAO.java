@@ -31,4 +31,8 @@ public class AuthDAO {
     public void createAuth(AuthData authData) {
         insertAuth(authData);
     }
+
+    public Object read(String authToken) {
+        return tokens.get(authToken);
+    }
 }

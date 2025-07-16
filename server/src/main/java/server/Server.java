@@ -27,7 +27,8 @@ public class Server {
         // In Server.java
         GameDAO gameDAO = new GameDAO(); // Your custom DAO that uses MemoryDataAccess
         GameService gameService = new GameService(gameDAO);
-        Spark.post("/game", new CreateGameHandler(gameService)); // ✅ pass the service in
+        Spark.post("/game", new CreateGameHandler(gameService, authDAO));
+
 
 
 
