@@ -27,8 +27,16 @@ public class ListGamesHandler implements Route {
     @Override
     public Object handle(Request req, Response res) throws Exception {
         try {
+            // Get the auth token from the header
             String authToken = req.headers("Authorization");
 
+            // Basic auth validation — check if token is null/blank or invalid
+            if (authToken == null || authToken.isBlank() || authDAO.read(authToken) == null) {
+                res.status(401);
+                return gson.toJson(new ErrorResponse("Error: unauthorized"));
+            }
+
+            // If authorized, proceed to list games
             Collection<GameData> games = gameService.listGames(authToken);
 
             Map<String, Object> result = new HashMap<>();
@@ -38,13 +46,10 @@ public class ListGamesHandler implements Route {
             return gson.toJson(result);
 
         } catch (DataAccessException e) {
-            if (e.getMessage().contains("unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(500);
-            }
-            return gson.toJson(new ErrorResponse(e.getMessage()));
+            // Use your centralized error handler for exceptions
+            return ErrorHandler.handleDataAccessException(e, res);
         }
     }
+
 }
 

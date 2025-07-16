@@ -24,15 +24,11 @@ public class LogoutHandler implements Route {
         try {
             userService.logout(authToken);
             res.status(200);
-            return "{}";
+            return "{}";  // empty success response
         } catch (DataAccessException e) {
-            if (e.getMessage().contains("unauthorized")) {
-                res.status(401);
-            } else {
-                res.status(500);
-            }
-            return gson.toJson(new ErrorResponse(e.getMessage()));
+            return ErrorHandler.handleDataAccessException(e, res);
         }
     }
+
 }
 

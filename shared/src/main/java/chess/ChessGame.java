@@ -54,13 +54,6 @@ public class ChessGame {
             return Collections.emptyList();
         }
 
-        // Note: The test `Valid Moves Independent of Team Turn` implies we should allow checking moves
-        // for any piece on the board, not just the current turn. So REMOVE the team check below:
-        //
-        // if (piece.getTeamColor() != teamTurn) {
-        //     return Collections.emptyList();
-        // }
-
         // Get pseudo-legal moves (may include illegal moves like exposing king to check)
         Collection<ChessMove> pseudo = piece.pieceMoves(board, startPosition, this);
         List<ChessMove> legal = new ArrayList<>();
