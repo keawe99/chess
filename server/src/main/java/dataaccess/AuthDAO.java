@@ -4,11 +4,16 @@ import model.AuthData;
 import java.util.HashMap;
 
 public class AuthDAO {
+    private static AuthDAO instance = null;
     private final HashMap<String, AuthData> tokens = new HashMap<>();
 
-    // ✅ Explicit no-argument constructor
-    public AuthDAO() {
-        // No special setup needed
+    public AuthDAO() {}
+
+    public static synchronized AuthDAO getInstance() {
+        if (instance == null) {
+            instance = new AuthDAO();
+        }
+        return instance;
     }
 
     public void insertAuth(AuthData auth) {
@@ -27,12 +32,9 @@ public class AuthDAO {
         tokens.clear();
     }
 
-    // Optional: You may want to remove or implement this method
-    public void createAuth(AuthData authData) {
-        insertAuth(authData);
-    }
-
-    public Object read(String authToken) {
+    public AuthData read(String authToken) {
         return tokens.get(authToken);
     }
 }
+
+

@@ -8,47 +8,45 @@ import server.handler.CreateGameHandler;
 import server.handler.JoinGameHandler;
 import server.handler.ListGamesHandler;
 import server.handler.LogoutHandler;
+import server.RegisterHandler;
+import server.handler.LoginHandler;
+import server.ClearHandler;
+import service.ClearService;
 import service.GameService;
 import service.UserService;
-import spark.*;
+import spark.Spark;
 
 public class Server {
 
     public int run(int desiredPort) {
+        // Set the port and static files location
         Spark.port(desiredPort);
-
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
+        // Instantiate shared singletons and DAOs
         UserDAO userDAO = new UserDAO();
-        AuthDAO authDAO = new AuthDAO();
+        GameDAO gameDAO = new GameDAO();
+        AuthDAO authDAO = AuthDAO.getInstance();
+        MemoryDataAccess memoryDataAccess = MemoryDataAccess.getInstance();
+
+        // Services that depend on DAOs
         UserService userService = new UserService(userDAO, authDAO);
-
-        // In Server.java
-        GameDAO gameDAO = new GameDAO(); // Your custom DAO that uses MemoryDataAccess
         GameService gameService = new GameService(gameDAO);
-        Spark.post("/game", new CreateGameHandler(gameService, authDAO));
+        ClearService clearService = new ClearService(memoryDataAccess);
 
-
-
-
-
+        // Register routes and handlers (pass required dependencies)
         Spark.post("/user", new RegisterHandler(userService));
-        Spark.put("/game", new JoinGameHandler(gameService));
-        Spark.get("/game", new ListGamesHandler(gameService));
+        Spark.post("/session", new LoginHandler(userService));
+        Spark.delete("/session", new LogoutHandler(userService, authDAO));
 
+        Spark.post("/game", new CreateGameHandler(gameService, authDAO));
+        Spark.put("/game", new JoinGameHandler(gameService, authDAO));
+        Spark.get("/game", new ListGamesHandler(gameService, authDAO));
 
+        Spark.delete("/db", new ClearHandler(clearService));
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
+        // Initialize Spark AFTER all routes are registered
         Spark.init();
-
-        Spark.post("/session", new server.handler.LoginHandler(userService));
-
-
-        Spark.delete("/session", new LogoutHandler(userService));
-
-        Spark.delete("/db", new ClearHandler());
-
         Spark.awaitInitialization();
 
         return Spark.port();

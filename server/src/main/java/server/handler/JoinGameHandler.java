@@ -1,6 +1,7 @@
 package server.handler;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import model.JoinGameRequest;
 import model.ErrorResponse;
 import service.GameService;
@@ -12,7 +13,7 @@ public class JoinGameHandler implements Route {
     private final GameService gameService;
     private final Gson gson = new Gson();
 
-    public JoinGameHandler(GameService gameService) {
+    public JoinGameHandler(GameService gameService, AuthDAO authDAO) {
         this.gameService = gameService;
     }
 

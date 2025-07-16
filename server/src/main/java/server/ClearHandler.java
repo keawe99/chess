@@ -14,6 +14,9 @@ public class ClearHandler implements Route {
     private final Gson gson = new Gson();
     private final MemoryDataAccess authDAO = MemoryDataAccess.getInstance(); // or use actual AuthDAO if preferred
 
+    public ClearHandler(ClearService clearService) {
+    }
+
     @Override
     public Object handle(Request request, Response response) {
         try {

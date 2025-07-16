@@ -1,6 +1,7 @@
 package server.handler;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.GameData;
 import service.GameService;
@@ -16,7 +17,7 @@ public class ListGamesHandler implements Route {
 
     private final GameService gameService;
 
-    public ListGamesHandler(GameService gameService) {
+    public ListGamesHandler(GameService gameService, AuthDAO authDAO) {
         this.gameService = gameService;
     }
 

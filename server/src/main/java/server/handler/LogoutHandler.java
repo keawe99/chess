@@ -1,5 +1,6 @@
 package server.handler;
 
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import service.UserService;
 import spark.Request;
@@ -11,7 +12,7 @@ import model.ErrorResponse;
 public class LogoutHandler implements Route {
     private final UserService userService;
 
-    public LogoutHandler(UserService userService) {
+    public LogoutHandler(UserService userService, AuthDAO authDAO) {
         this.userService = userService;
     }
 
