@@ -2,15 +2,13 @@ package server;
 
 import dataaccess.AuthDAO;
 import dataaccess.DAOFactory;
-import dataaccess.GameDAO;
+import dataaccess.MemoryGameDAO;
 import dataaccess.UserDAOInterface;
 import server.handler.CreateGameHandler;
 import server.handler.JoinGameHandler;
 import server.handler.ListGamesHandler;
 import server.handler.LoginHandler;
 import server.handler.LogoutHandler;
-import server.RegisterHandler;
-import server.ClearHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -25,13 +23,13 @@ public class Server {
 
         // Instantiate shared singletons and DAOs
         UserDAOInterface userDAO = DAOFactory.getUserDAO();
-        GameDAO gameDAO = new GameDAO();
+        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         AuthDAO authDAO = AuthDAO.getInstance();
 
         // Services that depend on DAOs
         UserService userService = new UserService(userDAO, authDAO);
-        GameService gameService = new GameService(gameDAO, authDAO);
-        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+        GameService gameService = new GameService(memoryGameDAO, authDAO);
+        ClearService clearService = new ClearService(userDAO, memoryGameDAO, authDAO);
 
         // Register routes and handlers (pass required dependencies)
         Spark.post("/user", new RegisterHandler(userService, authDAO));    // Register user

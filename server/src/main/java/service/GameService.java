@@ -12,11 +12,11 @@ import java.util.Collection;
 
 
 public class GameService {
-    private final GameDAO gameDAO;
+    private final MemoryGameDAO memoryGameDAO;
     private final AuthDAO authDAO;
 
-    public GameService(GameDAO gameDAO, AuthDAO authDAO) {
-        this.gameDAO = gameDAO;
+    public GameService(MemoryGameDAO memoryGameDAO, AuthDAO authDAO) {
+        this.memoryGameDAO = memoryGameDAO;
         this.authDAO = authDAO;
     }
 
@@ -30,7 +30,7 @@ public class GameService {
         if (auth == null) {
             throw new DataAccessException("Error: unauthorized", 401);
         }
-        return gameDAO.listGames();
+        return memoryGameDAO.listGames();
     }
 
     /**
@@ -46,7 +46,7 @@ public class GameService {
             throw new DataAccessException("Error: unauthorized", 401);
         }
 
-        int newGameID = gameDAO.createGame(request.gameName()).gameID();
+        int newGameID = memoryGameDAO.createGame(request.gameName()).gameID();
         return new CreateGameResponse(newGameID);
     }
 
@@ -63,7 +63,7 @@ public class GameService {
             throw new DataAccessException("Error: unauthorized", 401);
         }
 
-        GameData game = gameDAO.getGame(request.gameID());
+        GameData game = memoryGameDAO.getGame(request.gameID());
         if (game == null) {
             throw new DataAccessException("Error: bad request", 400);
         }
@@ -86,6 +86,6 @@ public class GameService {
             default -> throw new DataAccessException("Error: bad request", 400);
         }
 
-        gameDAO.updateGame(game);
+        memoryGameDAO.updateGame(game);
     }
 }
