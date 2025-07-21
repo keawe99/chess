@@ -1,14 +1,11 @@
 package dataaccess;
 
 public class DataAccessException extends Exception {
-    private final int statusCode;
-
-    public DataAccessException(String message, int statusCode) {
+    public DataAccessException(String message, int i) {
         super(message);
-        this.statusCode = statusCode;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public DataAccessException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

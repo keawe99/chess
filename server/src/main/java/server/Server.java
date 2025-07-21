@@ -1,9 +1,6 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.MemoryDataAccess;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import server.handler.CreateGameHandler;
 import server.handler.JoinGameHandler;
 import server.handler.ListGamesHandler;
@@ -24,7 +21,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Instantiate shared singletons and DAOs
-        UserDAO userDAO = new UserDAO();
+        UserDAOInterface userDAO = DAOFactory.getUserDAO();
         GameDAO gameDAO = new GameDAO();
         AuthDAO authDAO = AuthDAO.getInstance();
         MemoryDataAccess memoryDataAccess = MemoryDataAccess.getInstance();

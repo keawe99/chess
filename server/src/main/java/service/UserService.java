@@ -1,9 +1,8 @@
 package service;
 
-import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import dataaccess.UserDAOInterface;
 import model.AuthData;
 import model.LoginRequest;
 import model.LoginResult;
@@ -13,10 +12,10 @@ import java.util.UUID;
 
 public class UserService {
 
-    private final UserDAO userDAO;
+    private final UserDAOInterface userDAO;
     private final AuthDAO authDAO;
 
-    public UserService(UserDAO userDAO, AuthDAO authDAO) {
+    public UserService(UserDAOInterface userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
@@ -35,9 +34,7 @@ public class UserService {
         return auth;
     }
 
-
     public LoginResult login(LoginRequest request) throws DataAccessException {
-        // Validate request
         if (request.username() == null || request.password() == null) {
             throw new DataAccessException("Error: bad request", 409);
         }
@@ -50,9 +47,9 @@ public class UserService {
 
         String token = UUID.randomUUID().toString();
         AuthData authData = new AuthData(token, user.username());
-        authDAO.insertAuth(authData); // ✅ INSERT IT!
-        return new LoginResult(user.username(), token);
+        authDAO.insertAuth(authData);
 
+        return new LoginResult(user.username(), token);
     }
 
     public void logout(String authToken) throws DataAccessException {
@@ -62,5 +59,4 @@ public class UserService {
         }
         authDAO.deleteAuth(authToken);
     }
-
 }
