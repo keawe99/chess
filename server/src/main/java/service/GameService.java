@@ -50,6 +50,15 @@ public class GameService {
         return new CreateGameResponse(newGameID);
     }
 
+    public GameData getGameById(int gameId) throws DataAccessException {
+        GameData game = gameDAO.getGame(gameId);
+        if (game == null) {
+            throw new DataAccessException("Error: game not found", 404);
+        }
+        return game;
+    }
+
+
     /**
      * Allows a user to join a game as WHITE or BLACK if the spot is available.
      */

@@ -31,12 +31,6 @@ public class ListGamesHandler implements Route {
             String authToken = req.headers("Authorization");
 
             // Basic auth validation — check if token is null/blank or invalid
-            if (authToken == null || authToken.isBlank() || authDAO.read(authToken) == null) {
-                res.status(401);
-                return gson.toJson(new ErrorResponse("Error: unauthorized"));
-            }
-
-            // If authorized, proceed to list games
             Collection<GameData> games = gameService.listGames(authToken);
 
             Map<String, Object> result = new HashMap<>();

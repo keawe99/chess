@@ -11,6 +11,14 @@
         <version>1.0.0</version>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>eclipse-releases</id>
+            <url>https://repo.eclipse.org/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
+
     <packaging>jar</packaging>
 
     <build>
@@ -117,6 +125,18 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+            <version>9.4.51.v20230217</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-servlet</artifactId>
+            <version>9.4.51.v20230217</version>
+        </dependency>
+
+
     </dependencies>
 
 

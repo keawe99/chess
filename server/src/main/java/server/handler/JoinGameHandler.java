@@ -31,15 +31,7 @@ public class JoinGameHandler implements Route {
             return "{}";
 
         } catch (DataAccessException e) {
-            if (e.getMessage().contains("unauthorized")) {
-                res.status(401);
-            } else if (e.getMessage().contains("already taken")) {
-                res.status(403);
-            } else if (e.getMessage().contains("bad request")) {
-                res.status(400);
-            } else {
-                res.status(500);
-            }
+            res.status(e.statusCode());
             return gson.toJson(new ErrorResponse(e.getMessage()));
         }
     }

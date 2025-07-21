@@ -13,12 +13,10 @@ import spark.Route;
 
 public class CreateGameHandler implements Route {
     private final GameService gameService;
-    private final AuthDAO authDAO;  // Need this to validate token
     private final Gson gson = new Gson();
 
     public CreateGameHandler(GameService gameService, AuthDAO authDAO) {
         this.gameService = gameService;
-        this.authDAO = authDAO;
     }
 
     public Object handle(Request req, Response res) {
@@ -32,15 +30,8 @@ public class CreateGameHandler implements Route {
             return gson.toJson(result);
 
         } catch (DataAccessException e) {
-            if (e.getMessage().contains("unauthorized")) {
-                res.status(401);
-            } else if (e.getMessage().contains("bad request")) {
-                res.status(400);
-            } else {
-                res.status(500);
-            }
+            res.status(e.statusCode());
             return gson.toJson(new ErrorResponse(e.getMessage()));
         }
     }
-
 }
