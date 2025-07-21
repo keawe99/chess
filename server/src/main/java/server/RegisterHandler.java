@@ -1,11 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
-import model.UserData;
-import model.AuthData;
-import service.UserService;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import model.AuthData;
+import model.UserData;
+import service.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -22,28 +22,28 @@ public class RegisterHandler implements Route {
 
     @Override
     public Object handle(Request req, Response res) {
+        Gson gson = new Gson();
         try {
-            UserData user = new Gson().fromJson(req.body(), UserData.class);
+            UserData user = gson.fromJson(req.body(), UserData.class);
             AuthData auth = userService.register(user);
 
-            // 💥 Store auth token
+            // Store auth token
             authDAO.insertAuth(auth);
 
             res.status(200);
-            return new Gson().toJson(auth);
+            return gson.toJson(auth);
         } catch (DataAccessException e) {
-            String message = e.getMessage();
-            if (message.contains("already taken")) {
+            if (e.getMessage().contains("already taken")) {
                 res.status(403);
             } else {
                 res.status(400);
             }
-            return new Gson().toJson(new ErrorMessage(message));
+            return gson.toJson(new ErrorResponse(e.getMessage()));
         } catch (Exception e) {
             res.status(500);
-            return new Gson().toJson(new ErrorMessage("Error: " + e.getMessage()));
+            return gson.toJson(new ErrorResponse("Internal server error"));
         }
     }
 
-    private record ErrorMessage(String message) {}
+    private record ErrorResponse(String message) {}
 }
