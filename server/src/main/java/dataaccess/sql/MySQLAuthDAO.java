@@ -21,7 +21,7 @@ public class MySQLAuthDAO implements AuthDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to insert auth token", e);
+            throw new DataAccessException("Unable to insert auth token");
         }
     }
 
@@ -40,7 +40,7 @@ public class MySQLAuthDAO implements AuthDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to retrieve auth token", e);
+            throw new DataAccessException("Unable to retrieve auth token");
         }
     }
 
@@ -53,7 +53,7 @@ public class MySQLAuthDAO implements AuthDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to delete auth token", e);
+            throw new DataAccessException("Unable to delete auth token");
         }
     }
 
@@ -64,7 +64,7 @@ public class MySQLAuthDAO implements AuthDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to clear auth table", e);
+            throw new DataAccessException("Unable to clear auth table");
         }
     }
 }

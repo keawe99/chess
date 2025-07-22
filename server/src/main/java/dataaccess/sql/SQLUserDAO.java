@@ -22,7 +22,7 @@ public class SQLUserDAO implements UserDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to insert user", e);
+            throw new DataAccessException("Unable to insert user");
         }
     }
 
@@ -45,7 +45,7 @@ public class SQLUserDAO implements UserDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to retrieve user", e);
+            throw new DataAccessException("Unable to retrieve user");
         }
     }
 
@@ -55,7 +55,7 @@ public class SQLUserDAO implements UserDAOInterface {
              var stmt = conn.createStatement()) {
             stmt.executeUpdate("DELETE FROM users");
         } catch (Exception e) {
-            throw new DataAccessException("Failed to clear users", e);
+            throw new DataAccessException("Failed to clear users");
         }
     }
 }

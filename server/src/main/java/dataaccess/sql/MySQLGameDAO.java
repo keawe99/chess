@@ -31,7 +31,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to create game", e);
+            throw new DataAccessException("Unable to create game");
         }
     }
 
@@ -56,7 +56,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to get game", e);
+            throw new DataAccessException("Unable to get game");
         }
     }
 
@@ -80,7 +80,7 @@ public class MySQLGameDAO implements GameDAOInterface {
             }
             return games;
         } catch (Exception e) {
-            throw new DataAccessException("Unable to list games", e);
+            throw new DataAccessException("Unable to list games");
         }
     }
 
@@ -97,7 +97,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to update game", e);
+            throw new DataAccessException("Unable to update game");
         }
     }
 
@@ -108,7 +108,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to clear games table", e);
+            throw new DataAccessException("Unable to clear games table");
         }
     }
 
