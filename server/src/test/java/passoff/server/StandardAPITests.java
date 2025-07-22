@@ -26,7 +26,7 @@ public class StandardAPITests {
     }
 
     @BeforeAll
-    public static void init() throws Exception {
+    public static void init() {
         try {
             server = new Server();
             var port = server.run(0);
