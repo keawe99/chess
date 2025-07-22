@@ -60,7 +60,7 @@ public class GameWebSocketHandler {
                 session.getUpgradeRequest().getParameterMap().get("token").get(0) : null;
 
         if (token == null || authDAO.getAuth(token) == null) {
-            session.close(4001, "Unauthorized: Invalid token");
+            session.close(401, "Unauthorized: Invalid token");
             return;
         }
 
@@ -75,7 +75,7 @@ public class GameWebSocketHandler {
     public void onMessage(Session session, String message) throws Exception {
         String username = sessionUserMap.get(session);
         if (username == null) {
-            session.close(4002, "Unauthorized: No username found");
+            session.close(401, "Unauthorized: No username found");
             return;
         }
 
