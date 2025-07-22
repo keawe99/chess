@@ -23,4 +23,10 @@ public class DatabaseManager {
 
         return DriverManager.getConnection(url, username, password);
     }
+
+    public void loadProperties(Properties props) throws IOException {
+        try (FileInputStream fis = new FileInputStream(CONFIG_FILE)) {
+            props.load(fis);
+        }
+    }
 }
