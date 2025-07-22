@@ -1,10 +1,10 @@
 package server;
 
-import dataaccess.*;
+import dataaccess.DatabaseManager;
 import dataaccess.dao.AuthDAO;
 import dataaccess.dao.DAOFactory;
+import dataaccess.dao.GameDAOInterface;
 import dataaccess.dao.UserDAOInterface;
-import dataaccess.memory.MemoryGameDAO;
 import server.handler.*;
 import service.ClearService;
 import service.GameService;
@@ -18,19 +18,19 @@ public class Server {
             Spark.port(desiredPort);
             Spark.staticFiles.location("web");
 
-            // 🔧 Make sure to initialize database BEFORE anything else uses it
+            // 🔧 Initialize database
             DatabaseManager.createDatabase();
             DatabaseManager.initializeDatabase();
 
             // Instantiate DAOs
             UserDAOInterface userDAO = DAOFactory.getUserDAO();
-            MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+            GameDAOInterface gameDAO = DAOFactory.getGameDAO(); // ✅ use GameDAOInterface here
             AuthDAO authDAO = AuthDAO.getInstance();
 
             // Services
             UserService userService = new UserService(userDAO, authDAO);
-            GameService gameService = new GameService(memoryGameDAO, authDAO);
-            ClearService clearService = new ClearService(userDAO, memoryGameDAO, authDAO);
+            GameService gameService = new GameService(gameDAO, authDAO);     // ✅ use GameDAOInterface
+            ClearService clearService = new ClearService(userDAO, gameDAO, authDAO); // ✅ use GameDAOInterface
 
             // Route registration
             Spark.post("/user", new RegisterHandler(userService, authDAO));
@@ -41,19 +41,16 @@ public class Server {
             Spark.get("/game", new ListGamesHandler(gameService, authDAO));
             Spark.delete("/db", new ClearHandler(clearService));
 
-            // Only call init AFTER everything is ready
             Spark.init();
             Spark.awaitInitialization();
 
             return Spark.port();
 
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
+
     public void stop() {
         Spark.stop();
         Spark.awaitStop();

@@ -10,7 +10,7 @@ public class DAOFactory {
 
     public static UserDAOInterface getUserDAO() {
         if (useMySQL) {
-            return new SQLUserDAO(); // ✅ Updated
+            return new SQLUserDAO(); // ✅ Returns SQL-backed User DAO
         } else {
             return new InMemoryUserDAO();
         }
@@ -18,7 +18,7 @@ public class DAOFactory {
 
     public static GameDAOInterface getGameDAO() {
         if (useMySQL) {
-            return new MySQLGameDAO(); // ✅ You'll build this soon
+            return new MySQLGameDAO(); // ✅ Returns SQL-backed Game DAO
         } else {
             return new MemoryGameDAO();
         }

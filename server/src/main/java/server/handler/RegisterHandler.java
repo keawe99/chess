@@ -45,5 +45,7 @@ public class RegisterHandler implements Route {
         }
     }
 
-    private record ErrorResponse(String message) {}
+    private record ErrorResponse(String message) {
+
+    }
 }
