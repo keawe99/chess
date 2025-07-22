@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.*;
 
 import java.util.*;
@@ -42,7 +43,7 @@ public class MemoryDataAccess implements DataAccess {
     @Override
     public int createGame(String gameName) {
         int id = nextGameId++;
-        GameData game = new GameData(id, null, null, gameName, new chess.ChessGame());
+        GameData game = new GameData(id, null, null, gameName, new ChessGame().toString());
         games.put(id, game);
         return id;
     }

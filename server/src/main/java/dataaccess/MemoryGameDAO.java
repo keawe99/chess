@@ -2,11 +2,13 @@ package dataaccess;
 
 import model.GameData;
 import chess.ChessGame;
+import com.google.gson.Gson;
 
 import java.util.*;
 
 public class MemoryGameDAO implements GameDAOInterface {
     private final Map<Integer, GameData> games = new HashMap<>();
+    private final Gson gson = new Gson();
     private int nextGameId = 1;
 
     @Override
@@ -23,9 +25,16 @@ public class MemoryGameDAO implements GameDAOInterface {
     @Override
     public GameData createGame(String gameName) {
         int id = nextGameId++;
-        GameData game = new GameData(id, null, null, gameName, new ChessGame());
+        ChessGame gameObj = new ChessGame();
+        String gameJson = gson.toJson(gameObj); // serialize
+        GameData game = new GameData(id, null, null, gameName, gameJson);
         games.put(id, game);
         return game;
+    }
+
+    @Override
+    public int createGame(GameData game) throws DataAccessException {
+        return 0;
     }
 
     @Override

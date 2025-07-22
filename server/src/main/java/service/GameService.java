@@ -1,6 +1,5 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.*;
 
 import model.AuthData;
@@ -85,13 +84,13 @@ public class GameService {
                 if (game.whiteUsername() != null) {
                     throw new DataAccessException("Error: already taken", 403);
                 }
-                game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+                game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.gameData());
             }
             case "BLACK" -> {
                 if (game.blackUsername() != null) {
                     throw new DataAccessException("Error: already taken", 403);
                 }
-                game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+                game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.gameData());
             }
             default -> throw new DataAccessException("Error: bad request", 400);
         }
@@ -101,7 +100,7 @@ public class GameService {
         gameDAO.updateGame(game);
     }
 
-    public void updateGame(int gameId, ChessGame updatedGame) throws DataAccessException {
+    public void updateGame(int gameId, String updatedGame) throws DataAccessException {
         GameData oldGame = gameDAO.getGame(gameId);
         if (oldGame == null) {
             throw new DataAccessException("Game not found", 404);

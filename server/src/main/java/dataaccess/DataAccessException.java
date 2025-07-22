@@ -9,6 +9,9 @@ public class DataAccessException extends Exception {
         super(message, cause);
     }
 
+    public DataAccessException(String failedToGetGameId) {
+    }
+
     public int statusCode() {
         return 400;
     }

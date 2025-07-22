@@ -18,5 +18,11 @@ public class ClearService {
         memoryGameDAO.clear();
         authDAO.clear();
     }
+
+//    @BeforeEach
+//    void setup() {
+//        DatabaseManager.configureDatabase();
+//    }
+
 }
 

@@ -6,7 +6,6 @@ import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -138,7 +137,7 @@ public class GameWebSocketHandler {
                 return;
             }
 
-            ChessGame game = gameData.game();
+            ChessGame game = gson.fromJson(gameData.gameData(), ChessGame.class);
 
             String fromStr = (String) moveMap.get("from");
             String toStr = (String) moveMap.get("to");
@@ -162,7 +161,8 @@ public class GameWebSocketHandler {
                 return;
             }
 
-            gameService.updateGame(gameId, game);
+            String updatedGameJson = gson.toJson(game);
+            gameService.updateGame(gameId, updatedGameJson);
 
             var updateMsg = Map.of(
                     "type", "moveMade",
