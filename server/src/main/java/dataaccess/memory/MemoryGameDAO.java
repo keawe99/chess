@@ -48,4 +48,9 @@ public class MemoryGameDAO implements GameDAOInterface {
     public void updateGame(GameData updatedGame) {
         games.put(updatedGame.gameID(), updatedGame);
     }
+
+    @Override
+    public void updateGamePlayer(int gameID, String color, String username) {
+
+    }
 }

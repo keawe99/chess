@@ -33,13 +33,19 @@ public class JoinGameHandler implements Route {
             res.status(200);
             return "{}";
 
+        } catch (IllegalArgumentException e) {
+            res.status(400);
+            return gson.toJson(new ErrorResponse("Error: bad request"));
+        } catch (IllegalStateException e) {
+            res.status(403);
+            return gson.toJson(new ErrorResponse("Error: already taken"));
         } catch (DataAccessException e) {
             res.status(500);
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
-
         } catch (Exception e) {
-            res.status(400);
-            return gson.toJson(new ErrorResponse("Error: bad request"));
+            res.status(500);
+            return gson.toJson(new ErrorResponse("Error: unexpected server error"));
         }
     }
+
 }

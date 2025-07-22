@@ -65,42 +65,38 @@ public class GameService {
      * Allows a user to join a game as WHITE or BLACK if the spot is available.
      */
     public void joinGame(JoinGameRequest request, String authToken) throws DataAccessException {
-        if (request == null || authToken == null || request.playerColor() == null) {
-            throw new DataAccessException("Error: bad request", 400);
+        if ((request == null)) {
+            throw new IllegalArgumentException("Missing game ID");
         }
 
-        AuthData auth = authDAO.getAuth(authToken);
+        var auth = authDAO.getAuth(authToken);
         if (auth == null) {
-            throw new DataAccessException("Error: unauthorized", 401);
+            throw new IllegalArgumentException("Invalid auth token");
         }
 
-        GameData game = gameDAO.getGame(request.gameID());
+        GameData game = gameDAO.getGame(request.getGameID());
         if (game == null) {
-            throw new DataAccessException("Error: bad request", 400);
+            throw new IllegalArgumentException("Game not found");
         }
 
-        String username = auth.username();
+        String color = request.getPlayerColor();
+        if (color != null) {
+            if (!color.equals("WHITE") && !color.equals("BLACK")) {
+                throw new IllegalArgumentException("Invalid player color");
+            }
 
-        switch (request.playerColor().toUpperCase()) {
-            case "WHITE" -> {
-                if (game.whiteUsername() != null) {
-                    throw new DataAccessException("Error: already taken", 403);
-                }
-                game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.gameData());
+            if (color.equals("WHITE") && game.getWhiteUsername() != null) {
+                throw new IllegalStateException("White already taken");
             }
-            case "BLACK" -> {
-                if (game.blackUsername() != null) {
-                    throw new DataAccessException("Error: already taken", 403);
-                }
-                game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.gameData());
+
+            if (color.equals("BLACK") && game.getBlackUsername() != null) {
+                throw new IllegalStateException("Black already taken");
             }
-            default -> throw new DataAccessException("Error: bad request", 400);
+
+            gameDAO.updateGamePlayer(request.getGameID(), color, auth.username());
         }
-
-
-
-        gameDAO.updateGame(game);
     }
+
 
     public void updateGame(int gameId, String updatedGame) throws DataAccessException {
         GameData oldGame = gameDAO.getGame(gameId);

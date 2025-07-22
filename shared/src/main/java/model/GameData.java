@@ -10,4 +10,12 @@ public record GameData(
     public String gameData() {
         return gameName;
     }
+
+    public Object getWhiteUsername() {
+        return whiteUsername;
+    }
+
+    public Object getBlackUsername() {
+        return blackUsername;
+    }
 }
