@@ -78,7 +78,7 @@ public class GameService {
             throw new DataAccessException("Error: bad request", 400);
         }
 
-        String username = auth.username();
+        String username = auth.getUsername();
 
         switch (request.playerColor().toUpperCase()) {
             case "WHITE" -> {

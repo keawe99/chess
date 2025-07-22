@@ -62,7 +62,7 @@ public class GameWebSocketHandler {
             return;
         }
 
-        String username = authDAO.getAuth(token).username();
+        String username = authDAO.getAuth(token).getUsername();
         sessionUserMap.put(session, username);
 
         session.getRemote().sendString(gson.toJson(Map.of("type", "connected", "username", username)));
