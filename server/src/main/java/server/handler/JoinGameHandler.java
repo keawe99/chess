@@ -40,7 +40,7 @@ public class JoinGameHandler implements Route {
             res.status(403);
             return gson.toJson(new ErrorResponse("Error: already taken"));
         } catch (DataAccessException e) {
-            res.status(500);
+            res.status(e.statusCode());
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         } catch (Exception e) {
             res.status(500);

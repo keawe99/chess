@@ -29,7 +29,7 @@ public class LogoutHandler implements Route {
             res.status(200);
             return "{}";  // empty success response
         } catch (DataAccessException e) {
-            res.status(500);
+            res.status(e.statusCode());
             return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         } catch (IllegalArgumentException e) {
             res.status(401);
