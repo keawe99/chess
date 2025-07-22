@@ -10,18 +10,20 @@ public class MySQLUserDAO implements UserDAOInterface {
 
     @Override
     public void insertUser(UserData user) throws DataAccessException {
-        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, user.username());
-            stmt.setString(2, user.password());
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getEmail());
             stmt.executeUpdate();
         } catch (Exception e) {
             throw new DataAccessException("Error creating user", e);
         }
     }
+
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
@@ -32,7 +34,11 @@ public class MySQLUserDAO implements UserDAOInterface {
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new UserData(rs.getString("username"), rs.getString("password"));
+                    return new UserData(
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("email")
+                    );
                 } else {
                     return null;
                 }

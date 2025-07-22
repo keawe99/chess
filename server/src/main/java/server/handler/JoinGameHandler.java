@@ -24,6 +24,12 @@ public class JoinGameHandler implements Route {
     public Object handle(Request req, Response res) throws Exception {
         try {
             String authToken = req.headers("Authorization");
+
+            if (authToken == null || authToken.isBlank()) {
+                res.status(401);
+                return gson.toJson(new ErrorResponse("Error: unauthorized"));
+            }
+
             JoinGameRequest joinRequest = gson.fromJson(req.body(), JoinGameRequest.class);
 
             gameService.joinGame(joinRequest, authToken);
@@ -33,7 +39,11 @@ public class JoinGameHandler implements Route {
         } catch (DataAccessException e) {
             res.status(e.statusCode());
             return gson.toJson(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            res.status(400);
+            return gson.toJson(new ErrorResponse("Error: bad request"));
         }
     }
+
 }
 

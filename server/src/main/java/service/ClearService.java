@@ -19,3 +19,4 @@ public class ClearService {
         authDAO.clear();
     }
 }
+

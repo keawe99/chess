@@ -22,12 +22,12 @@ public class UserService {
 
     public AuthData register(UserData user) throws DataAccessException {
         // Basic input validation
-        if (user.username() == null || user.password() == null || user.email() == null) {
+        if (user.getUsername() == null || user.getPassword() == null || user.getEmail() == null) {
             throw new DataAccessException("Error: bad request", 400);
         }
 
         // Check if username already exists
-        if (userDAO.getUser(user.username()) != null) {
+        if (userDAO.getUser(user.getUsername()) != null) {
             throw new DataAccessException("Error: username already taken", 403);
         }
 
@@ -36,7 +36,7 @@ public class UserService {
 
         // Generate auth token for new user
         String token = UUID.randomUUID().toString();
-        AuthData auth = new AuthData(token, user.username());
+        AuthData auth = new AuthData(token, user.getUsername());
         authDAO.insertAuth(auth);
 
         return auth;
@@ -51,16 +51,16 @@ public class UserService {
         // Get the user by username
         UserData user = userDAO.getUser(request.username());
 
-        if (user == null || !user.password().equals(request.password())) {
+        if (user == null || !user.getPassword().equals(request.password())) {
             throw new DataAccessException("Error: unauthorized", 401);
         }
 
         // Generate new auth token on successful login
         String token = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(token, user.username());
+        AuthData authData = new AuthData(token, user.getUsername());
         authDAO.insertAuth(authData);
 
-        return new LoginResult(user.username(), token);
+        return new LoginResult(user.getUsername(), token);
     }
 
     public void logout(String authToken) throws DataAccessException {
