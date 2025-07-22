@@ -1,5 +1,8 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
+import dataaccess.dao.GameDAOInterface;
 import model.GameData;
 
 import java.sql.*;

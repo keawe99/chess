@@ -1,6 +1,7 @@
-package dataaccess;
+package dataaccess.memory;
 
 import chess.ChessGame;
+import dataaccess.DataAccess;
 import model.*;
 
 import java.util.*;
@@ -32,7 +33,7 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public void insertUser(UserData user) {
-        users.put(user.getUsername(), user);
+        users.put(user.username(), user);
     }
 
     @Override

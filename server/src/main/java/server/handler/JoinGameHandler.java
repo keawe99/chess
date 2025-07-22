@@ -1,7 +1,7 @@
 package server.handler;
 
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
+import dataaccess.dao.AuthDAO;
 import dataaccess.DataAccessException;
 import model.JoinGameRequest;
 import model.ErrorResponse;

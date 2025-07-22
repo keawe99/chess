@@ -1,11 +1,13 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.dao.AuthDAOInterface;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class MySQLAuthDAO implements AuthDAOInterface {
 
@@ -15,7 +17,7 @@ public class MySQLAuthDAO implements AuthDAOInterface {
             String sql = "INSERT INTO auth (token, username) VALUES (?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, auth.authToken());
-                stmt.setString(2, auth.getUsername());
+                stmt.setString(2, auth.username());
                 stmt.executeUpdate();
             }
         } catch (Exception e) {

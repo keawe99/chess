@@ -1,4 +1,9 @@
-package dataaccess;
+package dataaccess.dao;
+
+import dataaccess.memory.InMemoryUserDAO;
+import dataaccess.memory.MemoryGameDAO;
+import dataaccess.sql.MySQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 
 public class DAOFactory {
     private static final boolean useMySQL = true;

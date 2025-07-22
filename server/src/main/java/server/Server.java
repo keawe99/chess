@@ -1,11 +1,11 @@
 package server;
 
 import dataaccess.*;
-import server.handler.CreateGameHandler;
-import server.handler.JoinGameHandler;
-import server.handler.ListGamesHandler;
-import server.handler.LoginHandler;
-import server.handler.LogoutHandler;
+import dataaccess.dao.AuthDAO;
+import dataaccess.dao.DAOFactory;
+import dataaccess.dao.UserDAOInterface;
+import dataaccess.memory.MemoryGameDAO;
+import server.handler.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;

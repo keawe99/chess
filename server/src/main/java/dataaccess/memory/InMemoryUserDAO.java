@@ -1,5 +1,7 @@
-package dataaccess;
+package dataaccess.memory;
 
+import dataaccess.DataAccessException;
+import dataaccess.dao.UserDAOInterface;
 import model.UserData;
 
 import java.util.HashMap;
@@ -9,10 +11,10 @@ public class InMemoryUserDAO implements UserDAOInterface {
 
     @Override
     public void insertUser(UserData user) throws DataAccessException {
-        if (users.containsKey(user.getUsername())) {
+        if (users.containsKey(user.username())) {
             throw new DataAccessException("Error: already taken", 409);
         }
-        users.put(user.getUsername(), user);
+        users.put(user.username(), user);
     }
 
     @Override

@@ -1,6 +1,10 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
+import dataaccess.dao.UserDAOInterface;
 import model.UserData;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,9 +16,9 @@ public class SQLUserDAO implements UserDAOInterface {
         try (Connection conn = DatabaseManager.getConnection()) {
             String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, user.getUsername());
-                stmt.setString(2, user.getPassword());
-                stmt.setString(3, user.getEmail());
+                stmt.setString(1, user.username());
+                stmt.setString(2, user.password());
+                stmt.setString(3, user.email());
                 stmt.executeUpdate();
             }
         } catch (Exception e) {

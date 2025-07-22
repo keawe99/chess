@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.*;
 
+import dataaccess.dao.AuthDAO;
+import dataaccess.dao.GameDAOInterface;
 import model.AuthData;
 import model.GameData;
 import model.CreateGameRequest;
@@ -77,7 +79,7 @@ public class GameService {
             throw new DataAccessException("Error: bad request", 400);
         }
 
-        String username = auth.getUsername();
+        String username = auth.username();
 
         switch (request.playerColor().toUpperCase()) {
             case "WHITE" -> {

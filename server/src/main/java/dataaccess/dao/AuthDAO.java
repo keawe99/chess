@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.dao;
 
 import model.AuthData;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class AuthDAO {
     public String getUsernameFromToken(String authToken) {
         AuthData auth = tokens.get(authToken);
         if (auth == null) return null;
-        return auth.getUsername();  // assuming AuthData has getUsername()
+        return auth.username();  // assuming AuthData has getUsername()
     }
 
 

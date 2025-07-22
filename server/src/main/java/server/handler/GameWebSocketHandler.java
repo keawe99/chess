@@ -5,7 +5,7 @@ import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
+import dataaccess.dao.AuthDAO;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -61,7 +61,7 @@ public class GameWebSocketHandler {
             return;
         }
 
-        String username = authDAO.getAuth(token).getUsername();
+        String username = authDAO.getAuth(token).username();
         sessionUserMap.put(session, username);
 
         session.getRemote().sendString(gson.toJson(Map.of("type", "connected", "username", username)));
