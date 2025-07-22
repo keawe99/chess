@@ -19,6 +19,7 @@ public class Server {
             Spark.staticFiles.location("web");
 
             // 🔧 Make sure to initialize database BEFORE anything else uses it
+            DatabaseManager.createDatabase();
             DatabaseManager.initializeDatabase();
 
             // Instantiate DAOs
