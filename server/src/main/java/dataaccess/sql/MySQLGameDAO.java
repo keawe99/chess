@@ -31,7 +31,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to create game");
+            throw new DataAccessException("Unable to create game", e, 500);
         }
     }
 
@@ -56,7 +56,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to get game");
+            throw new DataAccessException("Unable to get game", e, 500);
         }
     }
 
@@ -80,7 +80,7 @@ public class MySQLGameDAO implements GameDAOInterface {
             }
             return games;
         } catch (Exception e) {
-            throw new DataAccessException("Unable to list games");
+            throw new DataAccessException("Unable to list games", e, 500);
         }
     }
 
@@ -97,7 +97,7 @@ public class MySQLGameDAO implements GameDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to update game");
+            throw new DataAccessException("Unable to update game", e, 500);
         }
     }
 
@@ -108,12 +108,37 @@ public class MySQLGameDAO implements GameDAOInterface {
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            throw new DataAccessException("Unable to clear games table");
+            throw new DataAccessException("Unable to clear games table", e, 500);
         }
     }
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-        return null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String sql = "INSERT INTO games (whiteUsername, blackUsername, gameName, gameData) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, null);  // No white player yet
+                stmt.setString(2, null);  // No black player yet
+                stmt.setString(3, gameName);
+                stmt.setString(4, null);  // No game data yet
+
+                int affected = stmt.executeUpdate();
+                if (affected == 0) {
+                    throw new DataAccessException("Failed to create game");
+                }
+
+                try (ResultSet keys = stmt.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        int newGameID = keys.getInt(1);
+                        return new GameData(newGameID, null, null, gameName, null);
+                    } else {
+                        throw new DataAccessException("Failed to get generated game ID");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Database error: ", e, 500);
+        }
     }
+
 }
