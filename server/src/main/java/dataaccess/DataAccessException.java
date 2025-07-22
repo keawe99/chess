@@ -4,7 +4,7 @@ public class DataAccessException extends Exception {
     private final int statusCode;
 
     // Constructor storing the status code
-    public DataAccessException(String message, int statusCode) {
+    public DataAccessException(String message, Exception statusCode) {
         super(message);
         this.statusCode = statusCode;
     }
