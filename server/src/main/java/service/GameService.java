@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 
 import model.AuthData;
@@ -95,6 +96,18 @@ public class GameService {
             default -> throw new DataAccessException("Error: bad request", 400);
         }
 
+
+
         gameDAO.updateGame(game);
     }
+
+    public void updateGame(int gameId, ChessGame updatedGame) throws DataAccessException {
+        GameData oldGame = gameDAO.getGame(gameId);
+        if (oldGame == null) {
+            throw new DataAccessException("Game not found", 404);
+        }
+        GameData updated = new GameData(gameId, oldGame.whiteUsername(), oldGame.blackUsername(), oldGame.gameName(), updatedGame);
+        gameDAO.updateGame(updated);
+    }
+
 }
