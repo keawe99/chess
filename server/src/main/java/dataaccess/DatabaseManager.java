@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static final String CONFIG_FILE = "server/src/main/resources/db.properties";
+    private static final String CONFIG_FILE = "/db.properties";  // leading slash for root classpath
 
     public static Connection getConnection() throws Exception {
         Properties props = new Properties();
