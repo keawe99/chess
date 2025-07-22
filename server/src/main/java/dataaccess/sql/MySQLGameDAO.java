@@ -102,6 +102,11 @@ public class MySQLGameDAO implements GameDAOInterface {
     }
 
     @Override
+    public void updateGamePlayer(int gameID, String color, String username) {
+
+    }
+
+    @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM games")) {
