@@ -12,19 +12,16 @@ import spark.Route;
 
 public class JoinGameHandler implements Route {
     private final GameService gameService;
-    private final AuthDAO authDAO;
     private final Gson gson = new Gson();
 
     public JoinGameHandler(GameService gameService, AuthDAO authDAO) {
         this.gameService = gameService;
-        this.authDAO = authDAO;
     }
 
     @Override
     public Object handle(Request req, Response res) throws Exception {
         try {
             String authToken = req.headers("Authorization");
-
             if (authToken == null || authToken.isBlank()) {
                 res.status(401);
                 return gson.toJson(new ErrorResponse("Error: unauthorized"));
@@ -33,17 +30,27 @@ public class JoinGameHandler implements Route {
             JoinGameRequest joinRequest = gson.fromJson(req.body(), JoinGameRequest.class);
 
             gameService.joinGame(joinRequest, authToken);
+
             res.status(200);
             return "{}";
-
         } catch (DataAccessException e) {
-            res.status(e.statusCode());
+            int status = e.statusCode();
+            if (status == 0) {
+                // fallback if statusCode() not set properly
+                status = 400;
+            }
+            res.status(status);
             return gson.toJson(new ErrorResponse(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            // For bad requests like invalid join color or missing fields
+            res.status(400);
+            return gson.toJson(new ErrorResponse("Error: bad request"));
         } catch (Exception e) {
             res.status(400);
             return gson.toJson(new ErrorResponse("Error: bad request"));
         }
     }
+
 
 }
 
