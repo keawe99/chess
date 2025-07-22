@@ -1,4 +1,3 @@
-// File: server/src/main/java/dataaccess/MemoryDataAccess.java
 package dataaccess;
 
 import model.*;

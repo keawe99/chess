@@ -13,7 +13,7 @@ public class UserData {
 
     public String getEmail() {
         return email;
-    } // This is what you're missing
+    }
 
     public String getUsername() {
         return username;
