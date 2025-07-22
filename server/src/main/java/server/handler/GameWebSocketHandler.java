@@ -1,19 +1,19 @@
 package server.handler;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import service.GameService;
-import chess.ChessGame;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.*;
 
 @WebSocket
 public class GameWebSocketHandler {
@@ -34,7 +34,7 @@ public class GameWebSocketHandler {
         this.gameService = gameService;
     }
 
-    private chess.ChessPosition parseChessPosition(String pos) {
+    private ChessPosition parseChessPosition(String pos) {
         if (pos == null || pos.length() != 2) {
             throw new IllegalArgumentException("Invalid position format: " + pos);
         }
@@ -42,20 +42,18 @@ public class GameWebSocketHandler {
         char colChar = Character.toLowerCase(pos.charAt(0));
         char rowChar = pos.charAt(1);
 
-        int column = colChar - 'a' + 1;  // 'a' → 1, 'b' → 2, ..., 'h' → 8
-        int row = rowChar - '0';         // '1' → 1, ..., '8' → 8
+        int column = colChar - 'a' + 1;
+        int row = rowChar - '0';
 
         if (column < 1 || column > 8 || row < 1 || row > 8) {
             throw new IllegalArgumentException("Invalid position range: " + pos);
         }
 
-        return new chess.ChessPosition(row, column);
+        return new ChessPosition(row, column);
     }
-
 
     @OnWebSocketConnect
     public void onConnect(Session session) throws Exception {
-        // Expect token as a query param: ?token=abc123
         String token = session.getUpgradeRequest().getParameterMap().getOrDefault("token", null) != null ?
                 session.getUpgradeRequest().getParameterMap().get("token").get(0) : null;
 
@@ -67,7 +65,6 @@ public class GameWebSocketHandler {
         String username = authDAO.getAuth(token).username();
         sessionUserMap.put(session, username);
 
-        // Optionally send a welcome message or user info
         session.getRemote().sendString(gson.toJson(Map.of("type", "connected", "username", username)));
     }
 
@@ -88,15 +85,14 @@ public class GameWebSocketHandler {
                 joinGame(session, gameId);
             }
             case "makeMove" -> {
-                int moveGameId = ((Double) msg.get("gameId")).intValue(); // ✅ renamed to avoid conflict
+                int moveGameId = ((Double) msg.get("gameId")).intValue();
                 Map<?, ?> moveMap = (Map<?, ?>) msg.get("move");
                 handleMove(session, moveGameId, moveMap, username);
             }
             case "resign" -> {
-                int resignGameId = ((Double) msg.get("gameId")).intValue(); // 👈 Extract gameId from message
+                int resignGameId = ((Double) msg.get("gameId")).intValue();
                 handleResign(session, resignGameId, username);
             }
-
             default -> {
                 session.getRemote().sendString(gson.toJson(Map.of(
                         "type", "error",
@@ -113,7 +109,12 @@ public class GameWebSocketHandler {
             return;
         }
 
-        // Broadcast resignation
+        boolean isPlayer = username.equals(game.whiteUsername()) || username.equals(game.blackUsername());
+        if (!isPlayer) {
+            session.getRemote().sendString(gson.toJson(Map.of("type", "error", "message", "Must be a player to resign")));
+            return;
+        }
+
         var resignMsg = Map.of(
                 "type", "playerResigned",
                 "gameId", gameId,
@@ -121,12 +122,13 @@ public class GameWebSocketHandler {
         );
 
         for (Session s : gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet())) {
-            s.getRemote().sendString(gson.toJson(resignMsg));
+            try {
+                s.getRemote().sendString(gson.toJson(resignMsg));
+            } catch (Exception ignored) {}
         }
 
-        // You can also update game state or mark the game as finished if needed
+        // Optional: update game state in DB
     }
-
 
     private void handleMove(Session session, int gameId, Map<?, ?> moveMap, String username) {
         try {
@@ -138,7 +140,6 @@ public class GameWebSocketHandler {
 
             ChessGame game = gameData.game();
 
-            // Convert moveMap to ChessMove
             String fromStr = (String) moveMap.get("from");
             String toStr = (String) moveMap.get("to");
 
@@ -152,8 +153,7 @@ public class GameWebSocketHandler {
 
             var from = parseChessPosition(fromStr);
             var to = parseChessPosition(toStr);
-
-            var move = new chess.ChessMove(from, to, null); // Add promotion piece if needed
+            var move = new ChessMove(from, to, null); // Extend for promotion if needed
 
             try {
                 game.makeMove(move);
@@ -162,10 +162,8 @@ public class GameWebSocketHandler {
                 return;
             }
 
-            // Save updated game state
             gameService.updateGame(gameId, game);
 
-            // Broadcast updated game state
             var updateMsg = Map.of(
                     "type", "moveMade",
                     "gameId", gameId,
@@ -174,7 +172,9 @@ public class GameWebSocketHandler {
             );
 
             for (Session s : gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet())) {
-                s.getRemote().sendString(gson.toJson(updateMsg));
+                try {
+                    s.getRemote().sendString(gson.toJson(updateMsg));
+                } catch (Exception ignored) {}
             }
 
         } catch (Exception e) {
@@ -183,7 +183,6 @@ public class GameWebSocketHandler {
             } catch (Exception ignored) {}
         }
     }
-
 
     private void joinGame(Session session, int gameId) throws Exception {
         gameSessions.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
@@ -195,14 +194,12 @@ public class GameWebSocketHandler {
             return;
         }
 
-        // Send the current game state to the user
         session.getRemote().sendString(gson.toJson(Map.of("type", "gameState", "game", game)));
     }
 
     @OnWebSocketClose
     public void onClose(Session session, int statusCode, String reason) {
-        String username = sessionUserMap.remove(session);
-        // Remove session from all game sessions
+        sessionUserMap.remove(session);
         for (var sessions : gameSessions.values()) {
             sessions.remove(session);
         }
