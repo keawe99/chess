@@ -32,7 +32,7 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public void insertUser(UserData user) {
-        users.put(user.username(), user);
+        users.put(user.getUsername(), user);
     }
 
     @Override
