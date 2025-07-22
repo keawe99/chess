@@ -93,8 +93,10 @@ public class GameWebSocketHandler {
                 handleMove(session, moveGameId, moveMap, username);
             }
             case "resign" -> {
-                // TODO: Implement resign logic later
+                int resignGameId = ((Double) msg.get("gameId")).intValue(); // 👈 Extract gameId from message
+                handleResign(session, resignGameId, username);
             }
+
             default -> {
                 session.getRemote().sendString(gson.toJson(Map.of(
                         "type", "error",
@@ -103,6 +105,28 @@ public class GameWebSocketHandler {
             }
         }
     }
+
+    private void handleResign(Session session, int gameId, String username) throws Exception {
+        GameData game = gameService.getGameById(gameId);
+        if (game == null) {
+            session.getRemote().sendString(gson.toJson(Map.of("type", "error", "message", "Game not found")));
+            return;
+        }
+
+        // Broadcast resignation
+        var resignMsg = Map.of(
+                "type", "playerResigned",
+                "gameId", gameId,
+                "resignedBy", username
+        );
+
+        for (Session s : gameSessions.getOrDefault(gameId, ConcurrentHashMap.newKeySet())) {
+            s.getRemote().sendString(gson.toJson(resignMsg));
+        }
+
+        // You can also update game state or mark the game as finished if needed
+    }
+
 
     private void handleMove(Session session, int gameId, Map<?, ?> moveMap, String username) {
         try {
