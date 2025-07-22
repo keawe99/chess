@@ -33,15 +33,18 @@ public class RegisterHandler implements Route {
             res.status(200);
             return gson.toJson(auth);
         } catch (DataAccessException e) {
-            if (e.getMessage().contains("already taken")) {
+            String msg = e.getMessage().toLowerCase();
+            if (msg.contains("already taken")) {
                 res.status(403);
-            } else {
+            } else if (msg.contains("bad request")) {
                 res.status(400);
+            } else {
+                res.status(500);
             }
-            return gson.toJson(new ErrorResponse(e.getMessage()));
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
         } catch (Exception e) {
             res.status(500);
-            return gson.toJson(new ErrorResponse("Internal server error"));
+            return gson.toJson(new ErrorResponse("Error: internal server error"));
         }
     }
 

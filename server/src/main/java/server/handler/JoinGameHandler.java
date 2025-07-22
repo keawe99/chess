@@ -19,7 +19,7 @@ public class JoinGameHandler implements Route {
     }
 
     @Override
-    public Object handle(Request req, Response res) throws Exception {
+    public Object handle(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
             if (authToken == null || authToken.isBlank()) {
@@ -28,29 +28,18 @@ public class JoinGameHandler implements Route {
             }
 
             JoinGameRequest joinRequest = gson.fromJson(req.body(), JoinGameRequest.class);
-
             gameService.joinGame(joinRequest, authToken);
 
             res.status(200);
             return "{}";
+
         } catch (DataAccessException e) {
-            int status = e.statusCode();
-            if (status == 0) {
-                // fallback if statusCode() not set properly
-                status = 400;
-            }
-            res.status(status);
-            return gson.toJson(new ErrorResponse(e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            // For bad requests like invalid join color or missing fields
-            res.status(400);
-            return gson.toJson(new ErrorResponse("Error: bad request"));
+            res.status(500);
+            return gson.toJson(new ErrorResponse("Error: " + e.getMessage()));
+
         } catch (Exception e) {
             res.status(400);
             return gson.toJson(new ErrorResponse("Error: bad request"));
         }
     }
-
-
 }
-
