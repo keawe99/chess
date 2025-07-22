@@ -37,6 +37,13 @@ public class AuthDAO {
         return tokens.get(authToken);
     }
 
+    public String getUsernameFromToken(String authToken) {
+        AuthData auth = tokens.get(authToken);
+        if (auth == null) return null;
+        return auth.getUsername();  // assuming AuthData has getUsername()
+    }
+
+
 }
 
 
